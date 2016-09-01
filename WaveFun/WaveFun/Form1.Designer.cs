@@ -1,6 +1,6 @@
 ﻿namespace WaveFun
 {
-	partial class Form1
+	partial class WaveForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -42,23 +42,31 @@
 			this.button1.Text = "button1";
 			this.button1.UseVisualStyleBackColor = true;
 			this.button1.Click += new System.EventHandler(this.button1_Click);
+			this.button1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.button1_KeyDown);
+			//this.button1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.button1_KeyPress);
+			this.button1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.button1_KeyUp);
 			// 
 			// numericUpDown1
 			// 
 			this.numericUpDown1.Location = new System.Drawing.Point(82, 179);
+			this.numericUpDown1.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
 			this.numericUpDown1.Name = "numericUpDown1";
 			this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
 			this.numericUpDown1.TabIndex = 1;
 			this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
 			// 
-			// Form1
+			// WaveForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(284, 262);
 			this.Controls.Add(this.numericUpDown1);
 			this.Controls.Add(this.button1);
-			this.Name = "Form1";
+			this.Name = "WaveForm";
 			this.Text = "Form1";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

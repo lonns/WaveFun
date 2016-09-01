@@ -6,7 +6,7 @@ namespace WaveFun
 {
 	public class Chunks
 	{
-		public class WaveHeader
+		public class WaveHeader				// 12 bytes
 		{
 			public String sGroupID;			// always "RIFF"
 			public uint dwFileLength;		// total file length in bytes minus 8 for RIFF and WAVE
@@ -24,10 +24,10 @@ namespace WaveFun
 
 		}
 
-		public class WaveFormatChunk
+		public class WaveFormatChunk		// 26 bytes
 		{
 			public String sGroupID;			// four bytes: "fmt "
-			public uint dwChunkSize;		// length of header in bytes
+			public uint dwChunkSize;		// length of format chunk in bytes, excluding sGroupID and dwChunkSize
 			public ushort wFormatTag;		// 1 (MS PCM)
 			public ushort wChannels;		// number of channels
 			public uint dwSamplesPerSec;	// freq of audio in Hz... 44100
@@ -54,13 +54,13 @@ namespace WaveFun
 			}
 		}
 
-		public class WaveDataChunk
+		public class WaveDataChunk			// 8 bytes + data
 		{
 			public String sGroupID;
 			public uint dwChunkSize;
-			public byte[] sample8; // 8-bit
-			public short[] sample16; // 16-bit
-			public float[] sample32; // 32bit
+			public byte[] sample8;			// 8-bit
+			public short[] sample16;		// 16-bit
+			public float[] sample32;		// 32bit
 
 			/// <summary>
 			/// Initializes a new data chunk with default values.
