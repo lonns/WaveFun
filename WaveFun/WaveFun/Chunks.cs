@@ -6,34 +6,34 @@ namespace WaveFun
 {
 	public class Chunks
 	{
-		public class WaveHeader				// 12 bytes
+		public class WaveHeaderChunk        // 12 bytes
 		{
-			public String sGroupID;			// always "RIFF"
-			public uint dwFileLength;		// total file length in bytes minus 8 for RIFF and WAVE
-			public String sRiffType;		// always "WAVE"
+			public String sGroupID;         // always "RIFF"
+			public uint dwFileLength;       // total file length in bytes minus 8 for RIFF and WAVE
+			public String sRiffType;        // always "WAVE"
 
 			/// <summary>
 			/// Initializes a WaveHeader object with default values.
 			/// </summary>
-			public WaveHeader()
+			public WaveHeaderChunk()
 			{
 				dwFileLength = 0;
-				sGroupID ="RIFF";
+				sGroupID = "RIFF";
 				sRiffType = "WAVE";
 			}
 
 		}
 
-		public class WaveFormatChunk		// 26 bytes
+		public class WaveFormatChunk        // 26 bytes
 		{
-			public String sGroupID;			// four bytes: "fmt "
-			public uint dwChunkSize;		// length of format chunk in bytes, excluding sGroupID and dwChunkSize
-			public ushort wFormatTag;		// 1 (MS PCM)
-			public ushort wChannels;		// number of channels
-			public uint dwSamplesPerSec;	// freq of audio in Hz... 44100
-			public uint dwAvgBytesPerSec;	// for estimating RAM allocation
-			public ushort wBlockAlign;		// sample frame size, in bytes
-			public uint dwBitsPerSample;	// bits per sample
+			public String sGroupID;         // four bytes: "fmt "
+			public uint dwChunkSize;        // length of format chunk in bytes, excluding sGroupID and dwChunkSize
+			public ushort wFormatTag;       // 1 (MS PCM)
+			public ushort wChannels;        // number of channels
+			public uint dwSamplesPerSec;    // freq of audio in Hz... 44100
+			public uint dwAvgBytesPerSec;   // for estimating RAM allocation
+			public ushort wBlockAlign;      // sample frame size, in bytes
+			public uint dwBitsPerSample;    // bits per sample
 
 			/// <summary>
 			/// Initializes a format chunk with the following properties:
@@ -54,13 +54,13 @@ namespace WaveFun
 			}
 		}
 
-		public class WaveDataChunk			// 8 bytes + data
+		public class WaveDataChunk          // 8 bytes + data
 		{
 			public String sGroupID;
 			public uint dwChunkSize;
-			public byte[] sample8;			// 8-bit
-			public short[] sample16;		// 16-bit
-			public float[] sample32;		// 32bit
+			public byte[] sample8;          // 8-bit
+			public short[] sample16;        // 16-bit
+			public float[] sample32;        // 32bit
 
 			/// <summary>
 			/// Initializes a new data chunk with default values.
@@ -68,8 +68,47 @@ namespace WaveFun
 			public WaveDataChunk()
 			{
 				sGroupID = "data";
-				sample16 = new short[0];
 				dwChunkSize = 0;
+			}
+		}
+
+		public class WaveHeader
+		{
+			public WaveHeaderChunk header;
+			public WaveFormatChunk format;
+			public WaveDataChunk data;
+
+			public uint numSamples;
+			public double duration;
+
+			public WaveHeader()
+			{
+				header = new WaveHeaderChunk();
+				format = new WaveFormatChunk();
+				data = new WaveDataChunk();
+			}
+
+			public void init(double duration, uint bitsPerSample = 16, uint sampleRate = 44100)
+			{
+				format.dwBitsPerSample = bitsPerSample;
+				format.dwSamplesPerSec = sampleRate;
+
+				this.duration = duration;
+
+				// total number of samples = sample rate per second * channels * duration in seconds
+				numSamples = (uint)(format.dwSamplesPerSec * format.wChannels * duration);
+
+				// initialize the 16-bit array
+				data.sample16 = new short[numSamples];
+
+				// total file size 
+				uint fileSize = numSamples * (format.dwBitsPerSample / 8) + 46; // 46 bytes in the header
+
+				// write to dwFileLength
+				header.dwFileLength = fileSize - 8; // -8 to exclude RIFF and WAVE
+
+				// calculate data chunk size in bytes
+				data.dwChunkSize = (numSamples * (format.dwBitsPerSample / 8));
 			}
 		}
 	}
